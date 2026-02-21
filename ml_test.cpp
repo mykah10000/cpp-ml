@@ -48,7 +48,7 @@ int main(){
     
     cout << "init error: " << y[0]-y_hat;
     cout << " init w: " << w << ", init b: " << b << "\n";
-    for(int epoch = 0; epoch<1000;epoch++){
+    for(int epoch = 0; epoch<500;epoch++){
         double dw = 0;
         double db = 0;
         double loss = 0;
