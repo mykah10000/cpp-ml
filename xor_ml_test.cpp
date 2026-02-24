@@ -20,9 +20,9 @@ int main(){
     mt19937 gen(rd());
     uniform_int_distribution<> randInt(0,1);
     uniform_real_distribution<> randWeight(-.1,.1);
-    array<array<double,2>,10000> input;
-    array<double,10000> y;
-    for(int i = 0; i<10000; i++){
+    array<array<double,2>,100> input;
+    array<double,100> y;
+    for(int i = 0; i<100; i++){
         double x1 = static_cast<double>(randInt(gen));
         double x2 = static_cast<double>(randInt(gen));
         input[i][0] = x1;
