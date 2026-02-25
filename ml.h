@@ -140,7 +140,7 @@ struct layer{
 struct network{
     private:
         vector<layer> layers;
-        double y_hat;
+        vector<double> y_hat;
         vector<vector<double>> S;
 
     public:
@@ -158,6 +158,8 @@ struct network{
             for(int i = 1; i<numLayers; i++){
                 layers[i].create(numNodes[i], numNodes[i-1]);
             }
+            y_hat = vector<double>(numNodes[numNodes.size()-1]);
+            cout << "y_hat.size() = " << y_hat.size() << "\n";
         }
 
         void display(){
@@ -179,31 +181,50 @@ struct network{
             for(int i = 1; i<layers.size();i++){
                 layers[i].calculate(layers[i-1]);
             }
-            y_hat = layers[layers.size()-1].activation(0);
-            cout << "Y_hat: " << y_hat << "\n";
+            for(int i = 0; i<layers[layers.size()-1].size();i++){
+                y_hat[i] = layers[layers.size()-1].activation(i);
+                cout << "Y_hat[" << i << "]: " << y_hat[i] << "\n";
+            }
         }
 
-        void backprop(const vector<vector<double>>& x, const vector<double>& y, double lr){
+        void backprop(const vector<vector<double>>& x, const vector<vector<double>>& y, double lr){
             if(y.size() <1 || y.size() <1){
                 cout << "Backprop: invalid inputs\n";
                 return;
             }
-            for(int i = 0; i < y.size();i++){
-                calculate(x[i]);
-                S[S.size()-1][0] = 2*(y_hat-y[i])*(layers[layers.size()-1].activation(0)*(1-layers[layers.size()-1].activation(0)));
-                // S[S.size()-1][0] = (y_hat-y[i]);
-                cout << "Backprop S[" << S.size()-1 << "][0]: " << S[S.size()-1][0] << "\n";
 
-                
+            //iterates through each expected output vector, y = expected output
+            for(int i = 0; i < y.size();i++){
+
+                //calculates predicted output using input vector x
+                calculate(x[i]);
+
+                //assigns S^n using dl/dy_hat * dy_hat/da^n
+                for(int k = 0;k<S[S.size()-1].size();k++){
+                    S[S.size()-1][k] = 2*(y_hat[k]-y[i][k])*(layers[layers.size()-1].activation(k)*(1-layers[layers.size()-1].activation(k)));
+                    if(i>y.size()-25){
+                        cout << "Backprop S[" << S.size()-1 << "][" << k << "]: " << S[S.size()-1][k] << "\n";
+                    }
+                }
+                // S[S.size()-1][0] = (y_hat-y[i]);
+
+                //iterates through S Vector<>
                 for(int j = S.size()-2; j>=0;j--){
+
+                    //iterates through nodes in S[j]
                     for(int k = 0;k<S[j].size();k++){
                         double summation = 0;
                         double dSigmoid = (layers[j+1].activation(k)*(1-layers[j+1].activation(k)));
+
+                        //iterates through nodes in current layer
                         for(int p = 0;p<layers[j+2].size();p++){
                             summation += (layers[j+2].weights(p)[k]*S[j+1][p]);
                         }
+
                         S[j][k] = summation * dSigmoid;
-                        cout << "backprop S[" << j << "][" << k << "]: " << S[j][k] << "\n";
+                        if(i>y.size()-25){
+                            cout << "backprop S[" << j << "][" << k << "]: " << S[j][k] << "\n";
+                        }
                     }
                 }
 
