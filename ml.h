@@ -33,7 +33,7 @@ struct node {
                 cout << "Node creation 1: prev layer length has to be larger than 0\n";
                 return;
             }
-            uniform_real_distribution<> randWeight(-.1,.1);
+            uniform_real_distribution<> randWeight(-1,1);
             weights = vector<double>(prevLen);
             for(int i = 0; i<prevLen;i++){
                 weights[i] = randWeight(gen);
@@ -59,7 +59,11 @@ struct node {
         }
 
         void setValues(vector<double>& w, double b){
-
+            for(int i = 0;i<w.size();i++){
+                // cout << "Old Weight: " << weights[i] << ", New weight: " << weights[i]-w[i];
+                weights[i] -= w[i];
+            }
+            bias -= b;
         }
 
         void inputLayerCreate(double actValue){
@@ -102,7 +106,7 @@ struct layer{
             }
         }
 
-        void calculate(const layer inputs){
+        void calculate(const layer& inputs){
             if(inputs.nodes.size() < 1){
                 cout << "layer calculation: previous layer has to be larger than 0\n";
                 return;
@@ -126,6 +130,10 @@ struct layer{
 
         vector<double> weights(int i){
             return nodes[i].returnWeights();
+        }
+
+        void setValues(vector<double>& w, double b, int n){
+            nodes[n].setValues(w, b);
         }
 };
 
@@ -168,7 +176,7 @@ struct network{
                 return;
             }
             layers[0].firstLayerCreate(inputs);
-            for(int i  = 1; i<layers.size();i++){
+            for(int i = 1; i<layers.size();i++){
                 layers[i].calculate(layers[i-1]);
             }
             y_hat = layers[layers.size()-1].activation(0);
@@ -182,11 +190,14 @@ struct network{
             }
             for(int i = 0; i < y.size();i++){
                 calculate(x[i]);
-                S[S.size()-1][0] = 2*(y_hat-y[i])*(layers[layers.size()-1].activation(0)*(1-layers[layers.size()-1].activation(0)));
+                // S[S.size()-1][0] = 2*(y_hat-y[i])*(layers[layers.size()-1].activation(0)*(1-layers[layers.size()-1].activation(0)));
+                S[S.size()-1][0] = (y_hat-y[i]);
                 cout << "Backprop S[" << S.size()-1 << "][0]: " << S[S.size()-1][0] << "\n";
-                double summation = 0;
+
+                
                 for(int j = S.size()-2; j>=0;j--){
                     for(int k = 0;k<S[j].size();k++){
+                        double summation = 0;
                         double dSigmoid = (layers[j+1].activation(k)*(1-layers[j+1].activation(k)));
                         for(int p = 0;p<layers[j+2].size();p++){
                             summation += (layers[j+2].weights(p)[k]*S[j+1][p]);
@@ -195,7 +206,18 @@ struct network{
                         cout << "backprop S[" << j << "][" << k << "]: " << S[j][k] << "\n";
                     }
                 }
+
+
+                for(int j = S.size()-1; j>=0;j--){
+                    for(int k = 0;k<S[j].size();k++){
+                        vector<double> weights;
+                        for(int p = 0;p<layers[j].size();p++){
+                            weights.push_back(lr*S[j][k]*layers[j].activation(p));
+                        }
+                        double bias = lr * S[j][k];
+                        layers[j+1].setValues(weights,bias,k);
+                    }
+                }
             }
-            
         }
 };
