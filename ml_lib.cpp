@@ -6,10 +6,10 @@ int main(){
     uniform_int_distribution<> randInt(0,1);
     uniform_real_distribution<> randWeight(-.1,.1);
     vector<vector<double>> input;
-    input = vector<vector<double>>(10000);
+    input = vector<vector<double>>(20000);
     vector<double> y;
-    y = vector<double>(10000);
-    for(int i = 0; i<10000; i++){
+    y = vector<double>(20000);
+    for(int i = 0; i<20000; i++){
         input[i] = vector<double>(2);
         double x1 = static_cast<double>(randInt(gen));
         double x2 = static_cast<double>(randInt(gen));

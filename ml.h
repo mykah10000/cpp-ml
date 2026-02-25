@@ -190,8 +190,8 @@ struct network{
             }
             for(int i = 0; i < y.size();i++){
                 calculate(x[i]);
-                // S[S.size()-1][0] = 2*(y_hat-y[i])*(layers[layers.size()-1].activation(0)*(1-layers[layers.size()-1].activation(0)));
-                S[S.size()-1][0] = (y_hat-y[i]);
+                S[S.size()-1][0] = 2*(y_hat-y[i])*(layers[layers.size()-1].activation(0)*(1-layers[layers.size()-1].activation(0)));
+                // S[S.size()-1][0] = (y_hat-y[i]);
                 cout << "Backprop S[" << S.size()-1 << "][0]: " << S[S.size()-1][0] << "\n";
 
                 
