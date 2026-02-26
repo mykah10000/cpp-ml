@@ -12,19 +12,25 @@ int main(){
     y = vector<vector<double>>(n);
     for(int i = 0; i<n; i++){
         input[i] = vector<double>(2);
-        y[i] = vector<double>(1);
+        y[i] = vector<double>(3);
         double x1 = static_cast<double>(randInt(gen));
         double x2 = static_cast<double>(randInt(gen));
         input[i][0] = x1;
         input[i][1] = x2;
+
+        //xor
         y[i][0] = ((static_cast<int>(input[i][0])+static_cast<int>(input[i][1]))%2);
+        //or
+        if(x1 || x2) y[i][1] = 1;
+        //and
+        if(x1 && x2) y[i][2] = x1;
         // cout << boolalpha << input[i][0] << input[i][1] << " " << y[i] << "\n";
     }
 
 
 
 
-    vector<int> networkNodes = {2,2,1};
+    vector<int> networkNodes = {2,2,3};
     int numLayers = 3;
 
     network nn;

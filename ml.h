@@ -183,7 +183,7 @@ struct network{
             }
             for(int i = 0; i<layers[layers.size()-1].size();i++){
                 y_hat[i] = layers[layers.size()-1].activation(i);
-                cout << "Y_hat[" << i << "]: " << y_hat[i] << "\n";
+                // cout << "Y_hat[" << i << "]: " << y_hat[i] << "\n";
             }
         }
 
@@ -202,9 +202,9 @@ struct network{
                 //assigns S^n using dl/dy_hat * dy_hat/da^n
                 for(int k = 0;k<S[S.size()-1].size();k++){
                     S[S.size()-1][k] = 2*(y_hat[k]-y[i][k])*(layers[layers.size()-1].activation(k)*(1-layers[layers.size()-1].activation(k)));
-                    if(i>y.size()-25){
-                        cout << "Backprop S[" << S.size()-1 << "][" << k << "]: " << S[S.size()-1][k] << "\n";
-                    }
+                    // if(i>y.size()-25){
+                    //     cout << "Backprop S[" << S.size()-1 << "][" << k << "]: " << S[S.size()-1][k] << "\n";
+                    // }
                 }
                 // S[S.size()-1][0] = (y_hat-y[i]);
 
@@ -223,12 +223,13 @@ struct network{
 
                         S[j][k] = summation * dSigmoid;
                         if(i>y.size()-25){
-                            cout << "backprop S[" << j << "][" << k << "]: " << S[j][k] << "\n";
+                            // cout << "backprop S[" << j << "][" << k << "]: " << S[j][k] << "\n";
+                            cout << "y_hat: " << y_hat[0] << ", " << y_hat[1] << ", " << y_hat[2] << "\ny: " << y[i][0] << ", " << y[i][1] << ", " << y[i][2] << "\n";
                         }
                     }
                 }
 
-
+                //updating weights and biases
                 for(int j = S.size()-1; j>=0;j--){
                     for(int k = 0;k<S[j].size();k++){
                         vector<double> weights;
